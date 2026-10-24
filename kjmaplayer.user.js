@@ -2,10 +2,10 @@
 // @id          iitc-plugin-Konjakumap
 // @name        IITC plugin: Konjakumap
 // @category    Layer
-// @version     0.4.0
+// @version     0.5.0
 // @namespace   https://github.com/IITC-CE/ingress-intel-total-conversion
-// @updateURL   https://github.com/mklyr/konjakumap/raw/refs/heads/main/kjmaplayer.user.js
-// @downloadURL https://github.com/mklyr/konjakumap/raw/refs/heads/main/kjmaplayer.user.js
+// @updateURL   https://github.com/secka-penguin/konjakumap/raw/refs/heads/main/kjmaplayer.user.js
+// @downloadURL https://github.com/secka-penguin/konjakumap/raw/refs/heads/main/kjmaplayer.user.js
 // @description IITCに今昔マップのレイヤーを表示させます
 // @match       https://intel.ingress.com/*
 // @match       https://intel-x.ingress.com/*
@@ -25,6 +25,7 @@ function wrapper(plugin_info) {
     };
 
     var TileLayerKjmap = null;
+    var BLANK_TILE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
     window.plugin.KjmapLayer.datasets = {
         sapporo: {
@@ -37,6 +38,16 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1995-1998年' }
             ]
         },
+        hakodate: {
+            label: '函館',
+            periods: [
+                { id: '00', label: '1915-1919年' },
+                { id: '01', label: '1951-1955年' },
+                { id: '02', label: '1968年' },
+                { id: '03', label: '1986-1989年' },
+                { id: '04', label: '1996-2001年' }
+            ]
+        },
         asahikawa: {
             label: '旭川',
             periods: [
@@ -47,14 +58,14 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1999-2001年' }
             ]
         },
-        hakodate: {
-            label: '函館',
+        muroran: {
+            label: '室蘭',
             periods: [
-                { id: '00', label: '1915-1919年' },
-                { id: '01', label: '1951-1955年' },
-                { id: '02', label: '1968年' },
-                { id: '03', label: '1986-1989年' },
-                { id: '04', label: '1996-2001年' }
+                { id: '00', label: '1896年' },
+                { id: '01', label: '1917年' },
+                { id: '02', label: '1955年' },
+                { id: '03', label: '1986-1987年' },
+                { id: '04', label: '1998-2000年' }
             ]
         },
         kushiro: {
@@ -67,16 +78,6 @@ function wrapper(plugin_info) {
                 { id: '04', label: '2001年' }
             ]
         },
-        tomakomai: {
-            label: '苫小牧',
-            periods: [
-                { id: '00', label: '1896年' },
-                { id: '01', label: '1935年' },
-                { id: '02', label: '1954-1955年' },
-                { id: '03', label: '1983-1984年' },
-                { id: '04', label: '1993-1999年' }
-            ]
-        },
         obihiro: {
             label: '帯広',
             periods: [
@@ -87,14 +88,14 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1998-2000年' }
             ]
         },
-        muroran: {
-            label: '室蘭',
+        tomakomai: {
+            label: '苫小牧',
             periods: [
                 { id: '00', label: '1896年' },
-                { id: '01', label: '1917年' },
-                { id: '02', label: '1955年' },
-                { id: '03', label: '1986-1987年' },
-                { id: '04', label: '1998-2000年' }
+                { id: '01', label: '1935年' },
+                { id: '02', label: '1954-1955年' },
+                { id: '03', label: '1983-1984年' },
+                { id: '04', label: '1993-1999年' }
             ]
         },
         aomori: {
@@ -175,16 +176,6 @@ function wrapper(plugin_info) {
                 { id: '03', label: '1999-2001年' }
             ]
         },
-        syonai: {
-            label: '庄内',
-            periods: [
-                { id: '00', label: '1913年' },
-                { id: '01', label: '1934年' },
-                { id: '02', label: '1974年' },
-                { id: '03', label: '1987年' },
-                { id: '04', label: '1997-2001年' }
-            ]
-        },
         yonezawa: {
             label: '米沢',
             periods: [
@@ -193,6 +184,16 @@ function wrapper(plugin_info) {
                 { id: '02', label: '1970-1973年' },
                 { id: '03', label: '1984年' },
                 { id: '04', label: '1999-2001年' }
+            ]
+        },
+        syonai: {
+            label: '庄内',
+            periods: [
+                { id: '00', label: '1913年' },
+                { id: '01', label: '1934年' },
+                { id: '02', label: '1974年' },
+                { id: '03', label: '1987年' },
+                { id: '04', label: '1997-2001年' }
             ]
         },
         fukushima: {
@@ -394,6 +395,26 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1998-2000年' }
             ]
         },
+        tottori: {
+            label: '鳥取',
+            periods: [
+                { id: '2man', label: '1897年 (2万分の1)' },
+                { id: '00', label: '1932年' },
+                { id: '01', label: '1973年' },
+                { id: '02', label: '1988年' },
+                { id: '03', label: '1999-2001年' }
+            ]
+        },
+        matsue: {
+            label: '松江・米子',
+            periods: [
+                { id: '00', label: '1915年' },
+                { id: '01', label: '1934年' },
+                { id: '02', label: '1975年' },
+                { id: '03', label: '1989-1990年' },
+                { id: '04', label: '1997-2003年' }
+            ]
+        },
         okayama: {
             label: '岡山・福山',
             periods: [
@@ -413,26 +434,6 @@ function wrapper(plugin_info) {
                 { id: '02', label: '1967-1969年' },
                 { id: '03', label: '1984-1990年' },
                 { id: '04', label: '1992-2001年' }
-            ]
-        },
-        tottori: {
-            label: '鳥取',
-            periods: [
-                { id: '2man', label: '1897年 (2万分の1)' },
-                { id: '00', label: '1932年' },
-                { id: '01', label: '1973年' },
-                { id: '02', label: '1988年' },
-                { id: '03', label: '1999-2001年' }
-            ]
-        },
-        matsue: {
-            label: '松江・米子',
-            periods: [
-                { id: '00', label: '1915年' },
-                { id: '01', label: '1934年' },
-                { id: '02', label: '1975年' },
-                { id: '03', label: '1989-1990年' },
-                { id: '04', label: '1997-2003年' }
             ]
         },
         yamaguchi: {
@@ -456,6 +457,27 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1994-2001年' }
             ]
         },
+        tokushima: {
+            label: '徳島',
+            periods: [
+                { id: '2man', label: '1896-1909年 (2万分の1)' },
+                { id: '00', label: '1917年' },
+                { id: '01', label: '1928-1934年' },
+                { id: '02', label: '1969-1970年' },
+                { id: '03', label: '1981-1987年' },
+                { id: '04', label: '1997-2000年' }
+            ]
+        },
+        takamatsu: {
+            label: '高松',
+            periods: [
+                { id: '2man', label: '1896-1910年 (2万分の1)' },
+                { id: '00', label: '1928年' },
+                { id: '01', label: '1969年' },
+                { id: '02', label: '1983-1984年' },
+                { id: '03', label: '1990-2000年' }
+            ]
+        },
         matsuyama: {
             label: '松山',
             periods: [
@@ -474,27 +496,6 @@ function wrapper(plugin_info) {
                 { id: '02', label: '1966-1969年' },
                 { id: '03', label: '1984-1989年' },
                 { id: '04', label: '1994-2001年' }
-            ]
-        },
-        takamatsu: {
-            label: '高松',
-            periods: [
-                { id: '2man', label: '1896-1910年 (2万分の1)' },
-                { id: '00', label: '1928年' },
-                { id: '01', label: '1969年' },
-                { id: '02', label: '1983-1984年' },
-                { id: '03', label: '1990-2000年' }
-            ]
-        },
-        tokushima: {
-            label: '徳島',
-            periods: [
-                { id: '2man', label: '1896-1909年 (2万分の1)' },
-                { id: '00', label: '1917年' },
-                { id: '01', label: '1928-1934年' },
-                { id: '02', label: '1969-1970年' },
-                { id: '03', label: '1981-1987年' },
-                { id: '04', label: '1997-2000年' }
             ]
         },
         kochi: {
@@ -548,7 +549,7 @@ function wrapper(plugin_info) {
                 { id: '01', label: '1954年' },
                 { id: '02', label: '1970年' },
                 { id: '03', label: '1982-1983年' },
-                { id: '03', label: '1996-2000年' }
+                { id: '04', label: '1996-2000年' }
             ]
         },
         sasebo: {
@@ -600,16 +601,6 @@ function wrapper(plugin_info) {
                 { id: '04', label: '1999-2001年' }
             ]
         },
-        miyakonojyou: {
-            label: '都城',
-            periods: [
-                { id: '00', label: '1902年' },
-                { id: '01', label: '1932年' },
-                { id: '02', label: '1966年' },
-                { id: '03', label: '1979-1980年' },
-                { id: '04', label: '1998-2001年' }
-            ]
-        },
         nobeoka: {
             label: '延岡',
             periods: [
@@ -618,6 +609,16 @@ function wrapper(plugin_info) {
                 { id: '02', label: '1965年' },
                 { id: '03', label: '1978-1978年' },
                 { id: '04', label: '1999-2000年' }
+            ]
+        },
+        miyakonojyou: {
+            label: '都城',
+            periods: [
+                { id: '00', label: '1902年' },
+                { id: '01', label: '1932年' },
+                { id: '02', label: '1966年' },
+                { id: '03', label: '1979-1980年' },
+                { id: '04', label: '1998-2001年' }
             ]
         },
         kagoshima: {
@@ -666,31 +667,29 @@ function wrapper(plugin_info) {
     };
 
     window.plugin.KjmapLayer.addKjmapLayer = function() {
-        if (!OptionData.dataset || !OptionData.period) return;
+        var configured = !!(OptionData.period && window.plugin.KjmapLayer.datasets[OptionData.dataset]);
 
-        var tileUrl = 'https://ktgis.net/kjmapw/kjtilemap/' +
-                      OptionData.dataset + '/' +
-                      OptionData.period + '/{z}/{x}/{y}.png';
-
-        if (TileLayerKjmap) {
-            TileLayerKjmap.setUrl(tileUrl);
-            TileLayerKjmap.setOpacity(OptionData.opacity / 10);
-            return;
+        var tileUrl = BLANK_TILE;
+        if (configured) {
+            tileUrl = 'https://ktgis.net/kjmapw/kjtilemap/' + OptionData.dataset + '/' + OptionData.period + '/{z}/{x}/{y}.png';
         }
 
         var maxNative = (OptionData.dataset === 'kanto' || OptionData.dataset === 'tohoku_pacific_coast') ? 15 : 16;
 
-        var tileOpt = {
+        if (TileLayerKjmap) {
+            TileLayerKjmap.options.maxNativeZoom = maxNative;
+            TileLayerKjmap.setUrl(tileUrl);
+            return;
+        }
+
+        TileLayerKjmap = L.tileLayer(tileUrl, {
             attribution: '今昔マップ on the web',
             minZoom: 8,
             maxNativeZoom: maxNative,
             maxZoom: 21,
             opacity: OptionData.opacity / 10,
-            tms: true,
-            zIndex: 10
-        };
-
-        TileLayerKjmap = L.tileLayer(tileUrl, tileOpt);
+            tms: true
+        });
         window.addLayerGroup('今昔マップ', TileLayerKjmap, true);
     };
 
@@ -713,7 +712,11 @@ function wrapper(plugin_info) {
             max: 10,
             step: 1
         });
-        var $spanOpacityDisplay = $('<span>', { id: 'KjmapLayer-opacity-display' });
+        var $spanOpacityDisplay = $('<span>', { id: 'KjmapLayer-opacity-display' }).css({
+            display: 'inline-block',
+            width: '4em',
+            textAlign: 'right'
+        });
 
         $rangeOpacity.val(OptionData.opacity);
         $spanOpacityDisplay.text((OptionData.opacity * 10) + '%');
@@ -780,23 +783,11 @@ function wrapper(plugin_info) {
             id: 'KjmapLayer-options-all',
             title: '今昔マップ設定',
             width: 'auto',
-            focusCallback: function() {
-                $rangeOpacity.val(OptionData.opacity);
-                $spanOpacityDisplay.text((OptionData.opacity * 10) + '%');
-            },
             closeCallback: function() {
-                var dsKey = $selDataset.val();
-                var prd = $selPeriod.val();
-                var opa = Number($rangeOpacity.val());
-
-                if (!dsKey || !prd) {
+                if (!$selDataset.val() || !$selPeriod.val()) {
                     alert('地域と年代を選択してください');
                     return false;
                 }
-
-                OptionData.dataset = dsKey;
-                OptionData.period = prd;
-                OptionData.opacity = opa;
                 window.plugin.KjmapLayer.saveOption();
                 return true;
             }
